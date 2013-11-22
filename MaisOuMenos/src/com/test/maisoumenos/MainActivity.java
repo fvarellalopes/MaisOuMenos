@@ -3,8 +3,10 @@ package com.test.maisoumenos;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
@@ -21,29 +23,73 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         
         botao_audio =  (BootstrapButton) findViewById(R.id.btn_play);
-        
         musica = MediaPlayer.create(this, R.drawable.mais_ou_menos);
-        
-        musica.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-			
-			@Override
-			public void onCompletion(MediaPlayer mp) {
-				Toast.makeText(MainActivity.this, "Teste funfou", 3000).show();
-				botao_audio.setBootstrapType("primary");
-			}
-		});
-		
+        registerForContextMenu(botao_audio);
+        configsBotao();
     }
     
-    public void executarAudio(View v)
-    {
-    	if (!musica.isPlaying())
-    	{
-    	musica.start();
-    	botao_audio.setBootstrapType("warning");
-    	}
-    }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        menu.setHeaderTitle("Opções:");
+        MenuItem toque = menu.add("Toque");
+        MenuItem notificacao = menu.add("Notificação");
+        MenuItem alarme = menu.add("Alarme");
 
+        toque.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // definir como toque
+            	return true;
+            }
+        });
+
+        notificacao.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // definir como notificacao 
+            	return true;
+            }
+        });
+        
+        alarme.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // definir como alarme
+            	return true;
+            }
+        });
+        
+
+        super.onCreateContextMenu(menu, v, menuInfo);
+    }
+    
+    
+    
+    public void configsBotao()
+    {
+    	 musica.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+ 			
+ 			@Override
+ 			public void onCompletion(MediaPlayer mp) {
+ 				botao_audio.setEnabled(true);
+ 			}
+ 		});
+    	 
+    	 botao_audio.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (!musica.isPlaying())
+		    	{
+		    	musica.start();
+		    	botao_audio.setEnabled(false);
+		    	}
+			}
+		});
+    	 
+    	
+    }
+    
 
     
 }
